@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where Is My Bus — Nepal's Smart Travel Booking</title>
+<style>
+:root{
+  --red:#D8262C;
+  --red-deep:#A91A1F;
+  --ink:#171a21;
+  --cream:#FFF8F4;
+  --paper:#FFFFFF;
+  --line:#F1DEDC;
+  --muted:#7a7a82;
+  --gold:#F2A93B;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  line-height:1.5;
+  overflow-x:hidden;
+}
+@font-face{font-family:'Disp';src:local('Georgia');}
+h1,h2,h3,.disp{font-family:'Iowan Old Style','Georgia',serif; letter-spacing:-0.01em;}
+a{text-decoration:none;color:inherit;}
+img{max-width:100%;display:block;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+button{font-family:inherit;cursor:pointer;border:none;}
+
+/* ---------- HEADER ---------- */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,248,244,0.92);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:12px 28px;max-width:1180px;margin:0 auto;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand img{height:44px;width:44px;border-radius:50%;}
+.brand .t1{font-weight:700;font-size:18px;line-height:1.1;color:var(--ink);font-family:'Iowan Old Style','Georgia',serif;}
+.brand .t2{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--red);font-weight:600;}
+nav.links{display:flex;gap:30px;font-size:14.5px;font-weight:500;}
+nav.links a{position:relative;padding:6px 0;color:#3a3a40;}
+nav.links a:after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--red);transition:width .25s ease;}
+nav.links a:hover:after{width:100%;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.btn-signin{
+  background:var(--red);color:#fff;padding:10px 22px;border-radius:30px;font-size:14px;font-weight:600;
+  box-shadow:0 6px 18px rgba(216,38,44,.28);transition:transform .2s ease;
+}
+.btn-signin:hover{transform:translateY(-2px);}
+.burger{display:none;font-size:24px;background:none;color:var(--ink);}
+
+/* ---------- HERO ---------- */
+.hero{
+  position:relative;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(216,38,44,.10), transparent 45%),
+    radial-gradient(circle at 85% 0%, rgba(242,169,59,.12), transparent 40%),
+    linear-gradient(180deg,#FFFBF8 0%, #FFF1EC 100%);
+  padding:72px 0 0;
+  overflow:hidden;
+}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center;}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--red-deep);font-weight:700;background:#FDEAEA;padding:7px 14px;border-radius:30px;}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--red);display:inline-block;animation:pulse 1.6s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:54px;line-height:1.06;margin:20px 0 18px;color:var(--ink);}
+.hero h1 em{font-style:normal;color:var(--red);}
+.hero p.lead{font-size:17px;color:var(--muted);max-width:480px;margin-bottom:0;}
+.hero-art{position:relative;}
+.hero-art img{border-radius:24px;}
+.route-line{position:absolute;inset:0;pointer-events:none;}
+
+.stats-row{display:flex;gap:36px;margin-top:34px;}
+.stats-row div{}
+.stats-row .num{font-family:'Iowan Old Style','Georgia',serif;font-size:28px;font-weight:700;color:var(--ink);}
+.stats-row .lbl{font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+
+/* search card */
+.search-card{
+  position:relative;margin-top:-46px;z-index:5;
+  background:var(--paper);border-radius:20px;
+  box-shadow:0 24px 60px -20px rgba(23,26,33,.22);
+  padding:26px 28px;border:1px solid var(--line);
+}
+.trip-toggle{display:inline-flex;background:#FBEFEC;border-radius:30px;padding:4px;margin-bottom:18px;}
+.trip-toggle button{padding:9px 20px;border-radius:26px;font-size:13.5px;font-weight:600;color:#8a7873;background:transparent;transition:.2s;}
+.trip-toggle button.active{background:var(--red);color:#fff;box-shadow:0 6px 14px rgba(216,38,44,.3);}
+.search-fields{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:14px;align-items:end;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;}
+.field input,.field select{
+  border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;font-size:14.5px;color:var(--ink);
+  background:#FFFDFC;outline:none;transition:.2s;
+}
+.field input:focus,.field select:focus{border-color:var(--red);}
+.swap-btn{
+  position:relative;
+}
+.btn-search{
+  background:var(--ink);color:#fff;border-radius:12px;padding:13px 26px;font-weight:700;font-size:14.5px;
+  display:flex;align-items:center;gap:8px;white-space:nowrap;transition:.2s;
+}
+.btn-search:hover{background:var(--red);}
+
+section{padding:96px 0;}
+.section-head{max-width:560px;margin-bottom:48px;}
+.section-head .eyebrow{margin-bottom:14px;}
+.section-head h2{font-size:36px;color:var(--ink);margin-bottom:12px;}
+.section-head p{color:var(--muted);font-size:15.5px;}
+
+/* destinations */
+.dest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.dest-card{
+  position:relative;border-radius:18px;overflow:hidden;height:260px;
+  box-shadow:0 12px 30px -14px rgba(23,26,33,.25);
+  transition:transform .35s ease;
+}
+.dest-card:hover{transform:translateY(-6px);}
+.dest-card img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease;}
+.dest-card:hover img{transform:scale(1.07);}
+.dest-overlay{
+  position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%, rgba(20,15,14,.82) 100%);
+  display:flex;flex-direction:column;justify-content:flex-end;padding:20px;color:#fff;
+}
+.dest-overlay .name{font-family:'Iowan Old Style','Georgia',serif;font-size:21px;font-weight:700;}
+.dest-overlay .price{font-size:12.5px;opacity:.85;margin-top:3px;}
+.dest-tag{
+  position:absolute;top:16px;left:16px;background:rgba(255,255,255,.92);color:var(--red-deep);
+  font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 11px;border-radius:20px;
+}
+
+/* services */
+.services-band{background:var(--ink);color:#fff;border-radius:28px;padding:56px 50px;}
+.services-band .section-head h2,{color:#fff;}
+.services-band .section-head{color:#fff;}
+.services-band .section-head p{color:#b9b6b6;}
+.services-band .eyebrow{background:rgba(216,38,44,.18);color:#ff9f9f;}
+.svc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-top:10px;}
+.svc-card{
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:24px 18px;
+  transition:.25s;
+}
+.svc-card:hover{background:rgba(216,38,44,.14);border-color:rgba(216,38,44,.45);transform:translateY(-4px);}
+.svc-icon{width:42px;height:42px;border-radius:11px;background:var(--red);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:19px;}
+.svc-card h4{font-size:15px;margin-bottom:6px;font-weight:600;}
+.svc-card p{font-size:12.5px;color:#b9b6b6;}
+
+/* why choose */
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+.why-card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:30px 24px;text-align:left;}
+.why-num{font-family:'Iowan Old Style','Georgia',serif;font-size:13px;color:var(--red);font-weight:700;letter-spacing:.05em;margin-bottom:14px;}
+.why-card h4{font-size:17px;margin-bottom:9px;}
+.why-card p{font-size:13.5px;color:var(--muted);}
+
+/* CTA band */
+.cta-band{
+  background:linear-gradient(120deg,var(--red) 0%, var(--red-deep) 100%);
+  border-radius:28px;padding:60px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:40px;
+}
+.cta-band h2{font-size:32px;margin-bottom:8px;}
+.cta-band p{color:#ffe2e2;font-size:15px;}
+.btn-white{background:#fff;color:var(--red-deep);padding:14px 30px;border-radius:30px;font-weight:700;font-size:14.5px;white-space:nowrap;}
+
+/* footer */
+footer{background:var(--ink);color:#cfcdcd;padding:64px 0 24px;}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:40px;margin-bottom:46px;}
+.foot-brand{display:flex;gap:10px;align-items:center;margin-bottom:16px;}
+.foot-brand img{height:38px;width:38px;border-radius:50%;}
+.foot-brand span{font-family:'Iowan Old Style','Georgia',serif;font-weight:700;color:#fff;font-size:17px;}
+footer h5{color:#fff;font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;}
+footer p, footer li{font-size:13.5px;color:#a9a6a6;line-height:1.8;}
+footer ul{list-style:none;}
+footer a{color:#a9a6a6;transition:.2s;}
+footer a:hover{color:var(--gold);}
+.legal-block{font-size:12.5px;color:#8d8a8a;line-height:1.9;}
+.legal-block b{color:#cfcdcd;}
+.social-row{display:flex;gap:12px;margin-top:16px;}
+.social-row a{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:14px;}
+.social-row a:hover{background:var(--red);}
+.foot-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:22px;display:flex;justify-content:space-between;font-size:12.5px;color:#8d8a8a;}
+
+/* responsive */
+@media(max-width:980px){
+  .hero-grid{grid-template-columns:1fr;}
+  .hero-art{order:-1;}
+  .hero h1{font-size:38px;}
+  .dest-grid{grid-template-columns:repeat(2,1fr);}
+  .svc-grid{grid-template-columns:repeat(2,1fr);}
+  .why-grid{grid-template-columns:repeat(2,1fr);}
+  .foot-grid{grid-template-columns:1fr 1fr;}
+  nav.links{display:none;}
+  .burger{display:block;}
+  .search-fields{grid-template-columns:1fr 1fr;}
+  .btn-search{grid-column:span 2;}
+  .cta-band{flex-direction:column;text-align:center;padding:40px 26px;}
+}
+@media(max-width:560px){
+  .dest-grid{grid-template-columns:1fr;}
+  .svc-grid{grid-template-columns:1fr;}
+  .why-grid{grid-template-columns:1fr;}
+  .foot-grid{grid-template-columns:1fr;}
+  .hero h1{font-size:32px;}
+  .stats-row{flex-wrap:wrap;gap:22px;}
+  .search-fields{grid-template-columns:1fr;}
+  .btn-search{grid-column:span 1;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a class="brand" href="#home">
+      <img src="logo.png" alt="Where Is My Bus logo">
+      <div>
+        <div class="t1">Where Is My Bus</div>
+        <div class="t2">Nepal Travel</div>
+      </div>
+    </a>
+    <nav class="links">
+      <a href="#home">Home</a>
+      <a href="#search">Bus Tickets</a>
+      <a href="#destinations">Domestic Trips</a>
+      <a href="#hotels">Hotels</a>
+      <a href="#activities">Activities</a>
+      <a href="#packages">Packages</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn-signin" href="#signin">Sign In</a>
+      <button class="burger" onclick="document.querySelector('nav.links').classList.toggle('mobile-open')">☰</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero" id="home" style="padding-bottom:0;">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow"><span class="dot"></span> Live bus tracking across Nepal</span>
+        <h1>Know exactly <em>where your bus</em> is, every single time.</h1>
+        <p class="lead">Book bus tickets, hotels and tour packages across Nepal in minutes — and never stand at a stop wondering if your bus left without you.</p>
+        <div class="stats-row">
+          <div><div class="num">120+</div><div class="lbl">Routes Covered</div></div>
+          <div><div class="num">35K+</div><div class="lbl">Happy Riders</div></div>
+          <div><div class="num">24/7</div><div class="lbl">Support</div></div>
+        </div>
+      </div>
+      <div class="hero-art">
+        <img src="logo.png" alt="Where Is My Bus" style="width:340px;margin:0 auto;">
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="search-card" id="search">
+    <div class="trip-toggle">
+      <button class="active" onclick="setTrip(this,'one')">One Way</button>
+      <button onclick="setTrip(this,'round')">Round Trip</button>
+    </div>
+    <form class="search-fields" onsubmit="event.preventDefault(); alert('Searching buses... (connect a backend to go live)');">
+      <div class="field">
+        <label>From</label>
+        <select required>
+          <option value="">Select origin</option>
+          <option>Birgunj</option><option>Kathmandu</option><option>Pokhara</option>
+          <option>Lumbini</option><option>Janakpur</option><option>Chitwan</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>To</label>
+        <select required>
+          <option value="">Select destination</option>
+          <option>Kathmandu</option><option>Birgunj</option><option>Pokhara</option>
+          <option>Lumbini</option><option>Janakpur</option><option>Chitwan</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Departure date</label>
+        <input type="date" required>
+      </div>
+      <button class="btn-search" type="submit">Search buses →</button>
+    </form>
+  </div>
+</div>
+
+<section id="destinations">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow"><span class="dot"></span> Where travellers go</span>
+      <h2>Popular destinations</h2>
+      <p>The routes our riders book the most — comfortable buses, frequent departures, fair prices.</p>
+    </div>
+    <div class="dest-grid">
+      <div class="dest-card"><div class="dest-tag">Most booked</div>
+        <img src="https://images.unsplash.com/photo-1605640840605-14ac1855827b?w=600&q=80" alt="Kathmandu">
+        <div class="dest-overlay"><div class="name">Kathmandu</div><div class="price">From Rs. 800</div></div></div>
+      <div class="dest-card">
+        <img src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=600&q=80" alt="Pokhara">
+        <div class="dest-overlay"><div class="name">Pokhara</div><div class="price">From Rs. 1,200</div></div></div>
+      <div class="dest-card">
+        <img src="https://images.unsplash.com/photo-1602423315735-2bcf698c8a2d?w=600&q=80" alt="Birgunj">
+        <div class="dest-overlay"><div class="name">Birgunj</div><div class="price">From Rs. 600</div></div></div>
+      <div class="dest-card">
+        <img src="https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=600&q=80" alt="Lumbini">
+        <div class="dest-overlay"><div class="name">Lumbini</div><div class="price">From Rs. 900</div></div></div>
+      <div class="dest-card">
+        <img src="https://images.unsplash.com/photo-1599661046827-dacde6976549?w=600&q=80" alt="Janakpur">
+        <div class="dest-overlay"><div class="name">Janakpur</div><div class="price">From Rs. 700</div></div></div>
+      <div class="dest-card">
+        <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=80" alt="Chitwan">
+        <div class="dest-overlay"><div class="name">Chitwan</div><div class="price">From Rs. 850</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="hotels">
+  <div class="wrap">
+    <div class="services-band">
+      <div class="section-head">
+        <span class="eyebrow"><span class="dot"></span> Everything in one place</span>
+        <h2>Our services</h2>
+        <p>Beyond bus tickets, we help you plan the whole trip.</p>
+      </div>
+      <div class="svc-grid">
+        <div class="svc-card"><div class="svc-icon">🚌</div><h4>Bus Ticket Booking</h4><p>Search, compare and book seats on verified operators.</p></div>
+        <div class="svc-card"><div class="svc-icon">🏨</div><h4>Hotel Booking</h4><p>Stay options near every major destination, at every budget.</p></div>
+        <div class="svc-card" id="packages"><div class="svc-icon">🗺️</div><h4>Tour Packages</h4><p>Curated multi-day trips with transport and stay bundled.</p></div>
+        <div class="svc-card" id="activities"><div class="svc-icon">🎟️</div><h4>Travel Activities</h4><p>Local experiences and activities booked ahead of time.</p></div>
+        <div class="svc-card"><div class="svc-icon">💬</div><h4>Customer Support</h4><p>Real humans, reachable around the clock.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow"><span class="dot"></span> Why riders trust us</span>
+      <h2>Why choose Where Is My Bus</h2>
+      <p>We built this for the everyday traveller standing at a bus park, not sure when the next bus comes.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-num">EASE</div><h4>Easy booking</h4><p>Search, pick a seat, pay — done in under two minutes.</p></div>
+      <div class="why-card"><div class="why-num">TRUST</div><h4>Secure payments</h4><p>Your transactions are encrypted and protected end to end.</p></div>
+      <div class="why-card"><div class="why-num">ALWAYS</div><h4>24/7 support</h4><p>Our team is reachable any hour, any day of the week.</p></div>
+      <div class="why-card"><div class="why-num">VALUE</div><h4>Best prices</h4><p>Transparent fares with no hidden charges at checkout.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="cta-band">
+      <div>
+        <h2>Ready for your next trip?</h2>
+        <p>Join thousands of travellers who book smarter with Where Is My Bus.</p>
+      </div>
+      <a href="#search" class="btn-white">Book a bus now</a>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand"><img src="logo.png" alt="logo"><span>Where Is My Bus</span></div>
+        <p>Where Is My Bus Pvt. Ltd. — a Nepal travel platform for bus tickets, hotels, packages and activities.</p>
+        <div class="social-row">
+          <a href="https://www.facebook.com/whereismybus1" target="_blank" rel="noopener">f</a>
+          <a href="https://www.tiktok.com/@whereismybus" target="_blank" rel="noopener">t</a>
+        </div>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="#search">Bus Tickets</a></li>
+          <li><a href="#destinations">Domestic Trips</a></li>
+          <li><a href="#hotels">Hotels</a></li>
+          <li><a href="#activities">Activities</a></li>
+          <li><a href="#packages">Packages</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul>
+          <li>Birgunj-16, Nagwa,<br>Parsa 44300, Nepal</li>
+          <li>9705970614</li>
+          <li>whereismybus@gmail.com</li>
+        </ul>
+      </div>
+      <div>
+        <h5>Company details</h5>
+        <div class="legal-block">
+          <b>Registration No:</b> ________________<br>
+          <b>PAN No:</b> ________________<br>
+          <b>Dept. of Commerce Reg. No:</b> ________________<br>
+          <b>Ward Registration No:</b> ________________
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Where Is My Bus Pvt. Ltd. All rights reserved.</span>
+      <span>Made for travellers across Nepal</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function setTrip(btn, mode){
+  document.querySelectorAll('.trip-toggle button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
